@@ -18,7 +18,7 @@ func NewItemRepo(db *pgx.Conn) domainRepository.ItemRepository {
 
 func (r *ItemRepo) Create(ctx context.Context, item *domainModel.ItemObject) error {
 	query := `
-        INSERT INTO items (
+        INSERT INTO item (
             item_id, name, price, required_level, 
             max_stack, rarity, item_type_id
         ) VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -43,7 +43,15 @@ func (r *ItemRepo) Create(ctx context.Context, item *domainModel.ItemObject) err
 }
 
 func (r *ItemRepo) Delete(ctx context.Context, itemID string) error {
+	query := `
+        DELETE from item where id = $1
+    `
+	_, err := r.db.Exec(ctx, query, itemID)
+	if err != nil {
+		panic(err)
+	}
 
+	return err
 }
 
 func (r *ItemRepo) Update(ctx context.Context, item *domainModel.ItemObject) error {
